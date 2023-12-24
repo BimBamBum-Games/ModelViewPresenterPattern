@@ -5,6 +5,6 @@ using UnityEngine.UI;
 
 [CreateAssetMenu(fileName = "new HealthBarModel", menuName = "Health Bar Model")]
 public class HealthBarModelSO : ScriptableObject {
-    public Image _healthPointSpr;
+    public ElementOfHealthBar elementOfHealthBar;
     public int quantity;
 }

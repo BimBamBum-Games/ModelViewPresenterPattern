@@ -1,35 +1,41 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HealthBarView : MonoBehaviour {
     [SerializeField] RectTransform _parentHolder;
-    [HideInInspector] public List<GameObject> _healthPoints;
+    [HideInInspector] public List<ElementOfHealthBar> healthPoints;
     [SerializeField] Button _takeDamageBtn;
     [SerializeField] Image _gameState_tmp;
 
     public void Start() {
-        _healthPoints = new List<GameObject>();
+        healthPoints = new List<ElementOfHealthBar>();
     }
 
-    public void InitializeButtonEvents(HealthBarPresenter hbp) {
+    public void InitializeButtonEvents(Action act) {
         //Presenterin bu classa ait buttonlarina subscribe olmasi icin dusuk seviyeli bagimlilik amaciyla kendini bu classa gecer.
-        _takeDamageBtn.onClick.AddListener(hbp.TakeDamageOnClick);
+        _takeDamageBtn.onClick.AddListener(act.Invoke);
     }
 
-    public void AddHealthPoint(Image prefabImg, int quantity) {
-        _healthPoints.Clear();
+    public void AddHealthPoint(ElementOfHealthBar prefab, int quantity) {
+        //Oyun baslarken Awake veya Start aninda initializasyon saglanir.
+        healthPoints.Clear();
         for (int i = 0; i < quantity; i++) {
-            Image im = Instantiate(prefabImg, _parentHolder);
-            _healthPoints.Add(im.gameObject);
+            ElementOfHealthBar eohb = Instantiate(prefab, _parentHolder);
+            healthPoints.Add(eohb);
         }
     }
 
     public void UpdateHealthBar(int damagePoint) {
-        int from = _healthPoints.Count - 1;
+        //Presenter tarafindan cagrilir. Ekranda kalan haklarin sprite modelleri ile view guncellenecektir.
+        int from = healthPoints.Count - 1;
         int to = damagePoint - 1;
         for (int i = from; i > to; i--) {
-            _healthPoints[i].SetActive(false);
+            if (healthPoints[i].isActiveAndEnabled == true) {
+                healthPoints[i].AnimateHPAtTheEndOfLife();
+            }        
         }
     }
 
@@ -42,5 +48,4 @@ public class HealthBarView : MonoBehaviour {
         //GameStateyi Presenterda Awake veya Start esnasinda initialize et.
         _gameState_tmp.gameObject.SetActive(false);
     }
-
 }

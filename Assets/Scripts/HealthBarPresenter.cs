@@ -16,17 +16,22 @@ public class HealthBarPresenter : MonoBehaviour {
     }
 
     public void TakeDamageOnClick() {
+        //Modeli guncelleyerek kalan haklarin sayisini ogren. Eger haklar sifir olursa oyun bitti yazisi yazdir.
         int cnt = _healthBarModel.UpdateHPCount(_dealtDamagePoint);
-        if (cnt < 0) {
+        int cmp = Mathf.Max(0, cnt);
+
+        if (cnt > -1) {
+            _healthBarView.UpdateHealthBar(cnt);
+        }
+
+        if (cmp == 0) {
             Debug.LogWarning("Kalan Hak 0!");
             _healthBarView.ShowGameState();
-            return;
         }
-        _healthBarView.UpdateHealthBar(cnt);
     }
 
     private void InitializeInputEvents() {
         //Daha az bagimlilik ile sagladi.
-        _healthBarView.InitializeButtonEvents(this);
+        _healthBarView.InitializeButtonEvents(TakeDamageOnClick);
     }
 }

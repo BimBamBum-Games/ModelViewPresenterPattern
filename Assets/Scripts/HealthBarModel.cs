@@ -4,20 +4,24 @@ using UnityEngine.UI;
 public class HealthBarModel : MonoBehaviour {
     //MVP Model, bu sinif MonoBehaviour sinifindan miras almak zorunda degildir.
     [SerializeField] HealthBarModelSO _hbmSo;
-    private Image _hpImg;
+    private ElementOfHealthBar _elementOfHB;
     private int _count;
     private void Start() {
-        _hpImg = _hbmSo._healthPointSpr;
+        _elementOfHB = _hbmSo.elementOfHealthBar;
         _count = _hbmSo.quantity;
     }
-    public Image GetHPImage() {
-        return _hpImg;
+
+    //Presenterda cagrilacaltir.
+    public ElementOfHealthBar GetHPImage() {
+        return _elementOfHB;
     }
 
+    //Presenterda cagrilacaltir.
     public int GetHPCount() {
         return _count;
     }
 
+    //Presenterda cagrilacaltir.
     public int UpdateHPCount(int count) {
         _count -= count;
         return _count;

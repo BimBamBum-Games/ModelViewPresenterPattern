@@ -803,7 +803,7 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
-  m_ChildScaleWidth: 0
+  m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1 &1574391784
@@ -836,7 +836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _parentHolder: {fileID: 1035692250}
-  _healthPoints: []
+  healthPoints: []
   _takeDamageBtn: {fileID: 1793998175}
   _gameState_tmp: {fileID: 87109579}
 --- !u!4 &1574391786
