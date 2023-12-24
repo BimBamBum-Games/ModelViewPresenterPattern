@@ -7,8 +7,7 @@ public class HealthBarModel : MonoBehaviour {
     private ElementOfHealthBar _elementOfHB;
     private int _count;
     private void Start() {
-        _elementOfHB = _hbmSo.elementOfHealthBar;
-        _count = _hbmSo.quantity;
+        ResetModel();
     }
 
     //Presenterda cagrilacaltir.
@@ -25,6 +24,12 @@ public class HealthBarModel : MonoBehaviour {
     public int UpdateHPCount(int count) {
         _count -= count;
         return _count;
+    }
+
+    public void ResetModel() {
+        //Modeli hem initler hem de resetler.
+        _elementOfHB = _hbmSo.elementOfHealthBar;
+        _count = _hbmSo.quantity;
     }
 
 }

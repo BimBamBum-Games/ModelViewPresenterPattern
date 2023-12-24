@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce3978554b9fb1846aa132bd0a8e26bb, type: 3}
   m_Name: HealthBarModel_01
   m_EditorClassIdentifier: 
-  elementOfHealthBar: {fileID: 188477210679204411, guid: 748bee00da2855040acbbdf984d09c03, type: 3}
+  elementOfHealthBar: {fileID: 2287391166604988291, guid: 9944a48f817798e4d8ba20f99a867ddf, type: 3}
   quantity: 10

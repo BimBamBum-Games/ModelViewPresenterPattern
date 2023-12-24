@@ -1,50 +1,76 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ElementOfHealthBar : MonoBehaviour {
 
     //HealthBarView bu classin Presenteri gibi davranacaktir. Her class kendi gorevini yerine getirmektedir.
-    public void AnimateHPAtTheEndOfLife() {
-        StartCoroutine(IAnimateHPAtTheEndOfLife());
+    [SerializeField] RectTransform _childRct;
+    private Vector3 _childLocalScale, _childLocalPosition;
+    private Quaternion _childLocalRotation;
+    private Image _childImg;
+    private void Start() {
+        _childImg = _childRct.GetComponent<Image>();
+        CacheInitValues();
     }
 
-    public IEnumerator IAnimateHPAtTheEndOfLife() {
-        //HP death esnasinda gerceklesecek olan animasyon metodudur.
-        float peakTime = 1f;
-        float timeMeter = 0;
-        Vector3 localScale = transform.localScale;
+    public RectTransform GetChildRect() {
+        //Image komponentini tasiyan animasyon child rect. Bu sekilde Layout update sirasinda olusacak problemlerden kacinilmis olunur.
+        return _childRct;
+    }
 
-        while (timeMeter < peakTime) {
-            timeMeter += Time.deltaTime;
-            transform.localScale = localScale * EaseInOutElastic(1 - timeMeter);
+    public Image GetImageComponent() {
+        //Bu HorizontalLayout tipi komponentlerin animasyonlari esnasinda refresh problemi yaratabildiginden dolayi Image komponentleri disable enable seklinde calistirilacak.
+        return _childImg;
+    }
+
+    public void CacheInitValues() {
+        //Ilk degerleri veya o anlik degerler yedeklenir.
+        _childLocalPosition = _childRct.localPosition;
+        _childLocalScale = _childRct.localScale;
+        _childLocalRotation = _childRct.localRotation;
+    }
+
+    public void SetOrResetTransformValues() {
+        //Yedeklenen ilk degerleri veya herhangi bir anda yedeklenmis olan degerleri setler. Presenter cagirir.
+        _childRct.localPosition = _childLocalPosition;
+        _childRct.localScale = _childLocalScale;
+        _childRct.localRotation = _childLocalRotation;
+    }
+
+    public void AnimateWithDefault(Func<float, float> ease, float duration, bool reverse) {
+        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, null, null, null, reverse));
+    }
+
+    public void AnimateWithOnComplete(Func<float, float> ease, float duration, Action onComplete, bool reverse) {
+        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, null, null, onComplete, reverse));
+    }
+
+    public void AnimateHPAtTheEndOfLife(Func<float, float> ease, float duration, Action onStart, Action onUpdate, Action onComplete, bool reverse) {
+        //Parametreler HealthBar tarafindan saglanacaktir.
+        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, onStart, onUpdate, onComplete, reverse));
+    }
+
+    public IEnumerator IAnimateHPAtTheEndOfLife(Func<float, float> ease, float duration, Action onStart = null, Action onUpdate = null, Action onComplete = null, bool reverse = false) {
+        float peakTime = 1f;
+        float timeMeter = reverse ? 0 : peakTime;
+        float inverseDivisionFraction = 1 / duration;
+        Vector3 localScale = _childRct.localScale;
+        onStart?.Invoke();
+        while (reverse ? (timeMeter < peakTime) : (timeMeter > 0)) {
+            timeMeter += (reverse ? 1 : -1) * Time.deltaTime * inverseDivisionFraction;
+            _childRct.localScale = localScale * ease(timeMeter);
+            onUpdate?.Invoke();
             yield return null;
         }
 
-        //timeMeter kusuratli kalabiliyor bu nedenle grafiksel bug yapiyor. Bu sayede grafik bug engellenir.
-        timeMeter = peakTime;
-        transform.localScale = localScale * EaseInOutElastic(1 - timeMeter);
+        // timeMeter kusuratli kalabiliyor bu nedenle grafiksel bug yapiyor. Bu sayede grafik bug engellenir.
+        timeMeter = reverse ? peakTime : 0;
+        _childRct.localScale = localScale * ease(timeMeter);
 
-        gameObject.SetActive(false);
+        onComplete?.Invoke();
     }
 
-    public float EaseInOutElastic(float t, float coef = 3f) {
-        //Animation saglamak maksadiyla kullanilacak olan ease metodudur.
 
-        float fixedNumber = (2 * Mathf.PI) / 4.5f;
-
-        if (t == 0) {
-            return 0;
-        }
-        else if (t == 1) {
-            return 1;
-        }
-        else if (t < 0.5) {
-            return -(Mathf.Pow(2, 20 * t - 10) * Mathf.Sin((20 * t - 11.125f) * fixedNumber)) / 2;
-        }
-        else {
-            return coef * (Mathf.Pow(3, -20 * t + 10) * Mathf.Sin((20 * t - 11.125f) * fixedNumber)) / 2 + 1;
-        }
-    }
 }

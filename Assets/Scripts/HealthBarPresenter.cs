@@ -23,15 +23,16 @@ public class HealthBarPresenter : MonoBehaviour {
         if (cnt > -1) {
             _healthBarView.UpdateHealthBar(cnt);
         }
-
-        if (cmp == 0) {
-            Debug.LogWarning("Kalan Hak 0!");
-            _healthBarView.ShowGameState();
-        }
     }
 
     private void InitializeInputEvents() {
         //Daha az bagimlilik ile sagladi.
-        _healthBarView.InitializeButtonEvents(TakeDamageOnClick);
+        _healthBarView.TakeDamageOnClick(TakeDamageOnClick);
+        _healthBarView.ResetHealthBarOnClick(ResetModelAndView);
+    }
+
+    private void ResetModelAndView() {
+        _healthBarView.ResetHealthBar();
+        _healthBarModel.ResetModel();
     }
 }
