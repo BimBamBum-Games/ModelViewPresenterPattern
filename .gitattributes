@@ -1,1 +1,3 @@
 *.html linguist-detectable=false
+*.cs linguist-language=CSharp
+*.shader linguist-detectable=false
