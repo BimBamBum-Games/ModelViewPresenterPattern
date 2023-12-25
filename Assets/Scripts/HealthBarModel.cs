@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBarModel : MonoBehaviour {
+public class HealthBarModel : MonoBehaviourBase {
     //MVP Model, bu sinif MonoBehaviour sinifindan miras almak zorunda degildir.
     [SerializeField] HealthBarModelSO _hbmSo;
     private ElementOfHealthBar _elementOfHB;
     private int _count;
+
     private void Start() {
         ResetModel();
     }

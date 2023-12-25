@@ -47,11 +47,6 @@ public class ElementOfHealthBar : MonoBehaviour {
         StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, null, null, onComplete, reverse));
     }
 
-    public void AnimateHPAtTheEndOfLife(Func<float, float> ease, float duration, Action onStart, Action onUpdate, Action onComplete, bool reverse) {
-        //Parametreler HealthBar tarafindan saglanacaktir.
-        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, onStart, onUpdate, onComplete, reverse));
-    }
-
     public IEnumerator IAnimateHPAtTheEndOfLife(Func<float, float> ease, float duration, Action onStart = null, Action onUpdate = null, Action onComplete = null, bool reverse = false) {
         float peakTime = 1f;
         float timeMeter = reverse ? 0 : peakTime;

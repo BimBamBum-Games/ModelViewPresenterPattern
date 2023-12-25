@@ -1,36 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBarView : MonoBehaviour {
+public class HealthBarView : MonoBehaviourBase {
     [SerializeField] RectTransform _horizontalLayoutHolderRct;
     [HideInInspector] public List<ElementOfHealthBar> healthPoints;
-    [SerializeField] Button _takeDamageBtn, _resetHealthBarBtn;
+    [field: SerializeField] public Button TakeDamageBtn { get; private set; }
+    [field: SerializeField] public Button ResetHealthBarBtn { get; private set; }
+    [field: SerializeField] public Button RecreateHealthBarBtn { get; private set; }
+
     [SerializeField] Image _gameState_tmp;
+    [SerializeField] TextMeshProUGUI _healthPointIndicatorTmp;
 
     public void Start() {
         healthPoints = new List<ElementOfHealthBar>();
     }
 
-    public void TakeDamageOnClick(Action act) {
-        //Presenterin bu classa ait buttonlarina subscribe olmasi icin dusuk seviyeli bagimlilik amaciyla kendini bu classa gecer.
-        _takeDamageBtn.onClick.AddListener(act.Invoke);
-    }
-
-    public void ResetHealthBarOnClick(Action act) {
-        _resetHealthBarBtn.onClick.AddListener(act.Invoke);
-    }
-
     public void AddHealthPoint(ElementOfHealthBar prefab, int quantity) {
         //Oyun baslarken Awake veya Start aninda initializasyon saglanir.
-        healthPoints.Clear();
+        DestroyElementsOfHealthBar();
         for (int i = 0; i < quantity; i++) {
             ElementOfHealthBar eohb = Instantiate(prefab, _horizontalLayoutHolderRct);
             healthPoints.Add(eohb);
         }
+        UpdateHealthPointIndicator(quantity.ToString());
+    }
+
+    private void DestroyElementsOfHealthBar() {
+        //Tum ElementOfHealthBar prefab orneklerini destroy eder.
+        for(int i = 0; i < healthPoints.Count; i++) {
+            Destroy(healthPoints[i].gameObject);
+            Dlog("Test : Destroy cagrildi!");
+        }
+        healthPoints.Clear();
     }
 
     public void UpdateHealthBar(int damagePoint) {
@@ -46,16 +52,15 @@ public class HealthBarView : MonoBehaviour {
                 eohb.AnimateWithDefault(EaseUtility.EaseInOutElastic, 1f, false);
             }
         }
-    }
-
-    public void SetDisableEOHB(ElementOfHealthBar eohb) {
-        //ElementOfHealthBar IEnumerator animasyonu bittiginde invoke edilecektir.
-        eohb.GetChildRect().gameObject.SetActive(false);
+        UpdateHealthPointIndicator(damagePoint.ToString());
     }
 
     public void ResetHealthBar() {
         //HealthBar GameObjelerini resetleyip tekrardan gorunur duruma getirir.
-        int nd = healthPoints.Count - 1;
+        int nd = healthPoints.Count;
+        UpdateHealthPointIndicator(nd.ToString());
+        //Liste elemen sayisi liste indexi disina ciktigindan dolayi sayi bir azaltilir.
+        nd--;
         while (nd > -1) {
             ElementOfHealthBar eohb = healthPoints[nd];
             eohb.SetOrResetTransformValues();
@@ -68,12 +73,21 @@ public class HealthBarView : MonoBehaviour {
 
     public void ShowGameState() {
         //Haklar bittiginde ekranda bir text ile bildir.
-        Debug.Log("OnComplete!");
+        Dlog("Test : OnComplete!");
         _gameState_tmp.gameObject.SetActive(true);
     }
 
     public void HideGameState() {
         //GameStateyi Presenterda Awake veya Start esnasinda initialize et.
         _gameState_tmp.gameObject.SetActive(false);
+    }
+
+    public void UpdateHealthPointIndicator(string hpValue) {
+        if (_healthPointIndicatorTmp != null) {
+            _healthPointIndicatorTmp.text = hpValue;
+        }
+        else {
+            Dlog("TmpGUI elementi referansi null degerindedir!");
+        }
     }
 }

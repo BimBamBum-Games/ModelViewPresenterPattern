@@ -1,13 +1,18 @@
 using UnityEngine;
 
-public class HealthBarPresenter : MonoBehaviour {
+public class HealthBarPresenter : MonoBehaviourBase {
     [SerializeField] HealthBarModel _healthBarModel;
     [SerializeField] HealthBarView _healthBarView;
     [SerializeField] int _dealtDamagePoint = 1;
 
     private void Start() {
-        InitializeViewerUI();
+        InitializeViewerUI();      
+    }
+    private void OnEnable() {
         InitializeInputEvents();
+    }
+    private void OnDisable() {
+        FinalizeInputEvents();
     }
 
     private void InitializeViewerUI() {
@@ -20,19 +25,37 @@ public class HealthBarPresenter : MonoBehaviour {
         int cnt = _healthBarModel.UpdateHPCount(_dealtDamagePoint);
         int cmp = Mathf.Max(0, cnt);
 
-        if (cnt > -1) {
-            _healthBarView.UpdateHealthBar(cnt);
+        Dlog("Test : CMP >>>>> " + cmp);
+
+        if (cmp >= 0) {
+            _healthBarView.UpdateHealthBar(cmp);
         }
     }
 
     private void InitializeInputEvents() {
-        //Daha az bagimlilik ile sagladi.
-        _healthBarView.TakeDamageOnClick(TakeDamageOnClick);
-        _healthBarView.ResetHealthBarOnClick(ResetModelAndView);
+        //View Button GameObjelerine methodlari subscribe duruma getir.
+        _healthBarView.TakeDamageBtn.onClick.AddListener(TakeDamageOnClick);
+        _healthBarView.ResetHealthBarBtn.onClick.AddListener(ResetModelAndView);
+        _healthBarView.RecreateHealthBarBtn.onClick.AddListener(RecreateView);
+    }
+
+    private void FinalizeInputEvents() {
+        //Mem lack onlemek icin OnDisable veya Destroy aninda unsubscribe duruma getir.
+        _healthBarView.TakeDamageBtn.onClick.RemoveListener(TakeDamageOnClick);
+        _healthBarView.ResetHealthBarBtn.onClick.RemoveListener(ResetModelAndView);
+        _healthBarView.RecreateHealthBarBtn.onClick.RemoveListener(RecreateView);
     }
 
     private void ResetModelAndView() {
+        //Tum yapiyi resetler.
         _healthBarView.ResetHealthBar();
         _healthBarModel.ResetModel();
+    }
+
+    private void RecreateView() {
+        //Tum yapiyi tekrardan insa eder.
+        _healthBarModel.ResetModel();
+        //_healthBarView.
+        InitializeViewerUI();
     }
 }
