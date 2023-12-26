@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ElementOfHealthBar : MonoBehaviour {
+public class ElementOfHealthBar : MonoBehaviourBase {
 
     //HealthBarView bu classin Presenteri gibi davranacaktir. Her class kendi gorevini yerine getirmektedir.
     [SerializeField] RectTransform _childRct;
@@ -39,33 +39,13 @@ public class ElementOfHealthBar : MonoBehaviour {
         _childRct.localRotation = _childLocalRotation;
     }
 
-    public void AnimateWithDefault(Func<float, float> ease, float duration, bool reverse) {
-        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, null, null, null, reverse));
+
+    public void AnimateChild(Func<float, float> ease, float duration, bool reverse) {
+        StartCoroutine(AnimTimer.IAnimateRectDefault(_childRct, EaseUtility.EaseInOutElastic, duration, reverse));
     }
 
-    public void AnimateWithOnComplete(Func<float, float> ease, float duration, Action onComplete, bool reverse) {
-        StartCoroutine(IAnimateHPAtTheEndOfLife(ease, duration, null, null, onComplete, reverse));
+    public void AnimateChildWithOnComplete(Func<float, float> ease, float duration, Action onComplete, bool reverse) {
+        StartCoroutine(AnimTimer.IAnimateRectWithOnComplete(_childRct, ease, duration, onComplete, reverse));
     }
-
-    public IEnumerator IAnimateHPAtTheEndOfLife(Func<float, float> ease, float duration, Action onStart = null, Action onUpdate = null, Action onComplete = null, bool reverse = false) {
-        float peakTime = 1f;
-        float timeMeter = reverse ? 0 : peakTime;
-        float inverseDivisionFraction = 1 / duration;
-        Vector3 localScale = _childRct.localScale;
-        onStart?.Invoke();
-        while (reverse ? (timeMeter < peakTime) : (timeMeter > 0)) {
-            timeMeter += (reverse ? 1 : -1) * Time.deltaTime * inverseDivisionFraction;
-            _childRct.localScale = localScale * ease(timeMeter);
-            onUpdate?.Invoke();
-            yield return null;
-        }
-
-        // timeMeter kusuratli kalabiliyor bu nedenle grafiksel bug yapiyor. Bu sayede grafik bug engellenir.
-        timeMeter = reverse ? peakTime : 0;
-        _childRct.localScale = localScale * ease(timeMeter);
-
-        onComplete?.Invoke();
-    }
-
 
 }

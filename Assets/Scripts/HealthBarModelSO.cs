@@ -28,15 +28,15 @@ public class HealthBarModelSOEditor : Editor {
 
     private void CheckUpLowerQuantityLimit() {
         //Quantity sayisal degerinin alt limitini kontrol eder.
-        DrawDefaultInspector();
+        serializedObject.Update();
+        base.OnInspectorGUI();
         EditorGUI.BeginChangeCheck();
         _quantitySrp.intValue = EditorGUILayout.IntField("Min", _quantitySrp.intValue);
         if (EditorGUI.EndChangeCheck()) {
-            if (_quantitySrp.intValue < 0) _quantitySrp.intValue = 0;
-            if (_quantitySrp.intValue < _quantitySrp.intValue) {
-                _quantitySrp.intValue = _quantitySrp.intValue;
-            }
+            if (_quantitySrp.intValue < 0) 
+                _quantitySrp.intValue = 0;
         }
+        serializedObject.ApplyModifiedProperties();
     }
 }
 #endif

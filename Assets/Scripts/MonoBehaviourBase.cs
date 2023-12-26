@@ -12,6 +12,12 @@ public class MonoBehaviourBase : MonoBehaviour {
 
     [SerializeField] bool _canDebugLogs;
     [SerializeField] DebugType _debugType = DebugType.Standart;
+
+    /// <summary>
+    /// Debug.Log yerine OnInspector uzerinde testi ac veya kapat seklinde kolaylik saglar. 
+    /// </summary>
+    /// <param name="message"></param>
+    
     protected void Dlog(string message) {
         if (_canDebugLogs) {
             switch (_debugType) {

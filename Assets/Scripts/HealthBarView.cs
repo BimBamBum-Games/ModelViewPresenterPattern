@@ -14,7 +14,9 @@ public class HealthBarView : MonoBehaviourBase {
     [field: SerializeField] public Button RecreateHealthBarBtn { get; private set; }
 
     [SerializeField] Image _gameState_tmp;
-    [SerializeField] TextMeshProUGUI _healthPointIndicatorTmp;
+
+    [Header("ElementTmpOfView Iceren TMpro Elementi")]
+    [SerializeField] ElementTmpOfView  _healthBarIndicator;
 
     public void Start() {
         healthPoints = new List<ElementOfHealthBar>();
@@ -46,10 +48,11 @@ public class HealthBarView : MonoBehaviourBase {
         for (int i = from; i > to; i--) {
             ElementOfHealthBar eohb = healthPoints[i];
             if(i == 0) {
-                eohb.AnimateWithOnComplete(EaseUtility.EaseInOutElastic, 1f, ShowGameState, false);
+                eohb.AnimateChildWithOnComplete(EaseUtility.EaseInOutElastic, 0.6f, ShowGameState, false);      
             }
             else {
-                eohb.AnimateWithDefault(EaseUtility.EaseInOutElastic, 1f, false);
+                eohb.AnimateChild(EaseUtility.EaseInOutElastic, 0.6f, false);
+                _healthBarIndicator.AnimateItself();
             }
         }
         UpdateHealthPointIndicator(damagePoint.ToString());
@@ -64,7 +67,7 @@ public class HealthBarView : MonoBehaviourBase {
         while (nd > -1) {
             ElementOfHealthBar eohb = healthPoints[nd];
             eohb.SetOrResetTransformValues();
-            eohb.AnimateWithDefault(EaseUtility.EaseInOutElastic, 1f, true);
+            eohb.AnimateChild(EaseUtility.EaseInOutElastic, 1f, true);
             nd--;
         }
         //GameState bildirisi tmp komponentini gizler.
@@ -83,8 +86,8 @@ public class HealthBarView : MonoBehaviourBase {
     }
 
     public void UpdateHealthPointIndicator(string hpValue) {
-        if (_healthPointIndicatorTmp != null) {
-            _healthPointIndicatorTmp.text = hpValue;
+        if (_healthBarIndicator != null) {
+            _healthBarIndicator.TmpGui.text = hpValue;
         }
         else {
             Dlog("TmpGUI elementi referansi null degerindedir!");

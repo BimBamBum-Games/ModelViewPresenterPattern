@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: HealthBarModel_01
   m_EditorClassIdentifier: 
   elementOfHealthBar: {fileID: 2287391166604988291, guid: 9944a48f817798e4d8ba20f99a867ddf, type: 3}
-  quantity: 41
+  quantity: 10
